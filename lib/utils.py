@@ -46,6 +46,8 @@ def create_activations(name, n_layers):
         phi_l = torch.sigmoid
     elif name == 'hard_sigmoid':
         def phi_l(x): torch.clamp(x, min=0, max=1)
+    elif name == 'tanh':
+        phi_l = torch.tanh
     else:
         raise ValueError(f'Nonlinearity \"{name}\" not defined.')
 

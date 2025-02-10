@@ -218,6 +218,25 @@ class EnergyBasedModel(abc.ABC, torch.nn.Module):
         w_optimizer.step()
         self.update_energy()
 
+    def w_optimize_symmetric(self, nudged_grad_plus, nudged_grad_minus, w_optimizer):
+        """
+        Update weights using nudged phase gradients corresponding to plus/minus beta.
+
+        Args:
+            nudged_grad_plus: List of positive nudged phase gradients
+            nudged_grad_minus: List of negative nudged phase gradients
+            w_optimizer: torch.optim.Optimizer for the model parameters
+        """
+        self.zero_grad()
+        w_optimizer.zero_grad()
+
+        # Apply the contrastive Hebbian style update
+        for p, n_gp, n_gm in zip(self.parameters(), nudged_grad_plus, nudged_grad_minus):
+            p.grad = (0.5 / self.c_energy.beta) * (n_gp - n_gm)
+
+        w_optimizer.step()
+        self.update_energy()
+
     def zero_grad(self):
         """
         Zero gradients for parameters and pre-activations.

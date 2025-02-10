@@ -77,3 +77,17 @@ def create_mnist_loaders(batch_size):
         mnist_test, batch_size=batch_size, drop_last=True, shuffle=False, **kwargs)
 
     return train_loader, test_loader
+
+
+def create_functarget_loaders(batch_size):
+
+    func_target = lambda x: torch.sin(2.0*torch.pi*x)
+
+    x_data = torch.linspace(0,1.,1000)
+    y_data = func_target(x_data)
+    train_dataset = torch.utils.data.TensorDataset(x_data[::2,None],y_data[::2,None])
+    test_dataset = torch.utils.data.TensorDataset(x_data[1::2,None],y_data[1::2,None])
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+    return train_loader, test_loader
